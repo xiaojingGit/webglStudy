@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body onload="main()">
+  <canvas id="webgl3" width="400" height="400"></canvas>
+
+  <script src="../webgl-utils.js"></script>
+  <script src="../webgl-debug.js"></script>
+  <script src="../cuon-utils.js"></script>
+
+  <script>
+    function main() {
+      const webglCanvas = document.getElementById('webgl3');
+
+      const gl = getWebGLContext(webglCanvas);
+
+      const vsource_shader = `
+        attribute vec4 a_Position;
+        attribute float a_PointSize;
+        void main() {
+          gl_Position = a_Position;
+          gl_PointSize = a_PointSize;
+        }
+      `;
+
+      const fsource_shader = `
+        precision mediump float;
+        uniform vec4 u_FragColor;
+        void main() {
+          gl_FragColor = u_FragColor;
+        }
+      `;
+
+      initShaders(gl, vsource_shader, fsource_shader);
+
+      const a_Position = gl.getAttribLocation(gl.program, 'a_Position');  // 获取变量
+      const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+      const u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
+
+      gl.vertexAttrib3f(a_Position, 0.5, 0.5, 0.5);
+      gl.vertexAttrib1f(a_PointSize, 15.0);
+      gl.uniform2f(u_FragColor, 0.3, 0.8);
+
+      gl.clearColor(0.0, 0.0, 0.0, 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      gl.drawArrays(gl.POINTS, 0, 1);
+    }
+  </script>
+</body>
+</html>

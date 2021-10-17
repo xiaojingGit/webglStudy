@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body onload="main()">
+  <canvas id="webgl4" width="400" height="400"></canvas>
+
+  <script src="../webgl-utils.js"></script>
+  <script src="../webgl-debug.js"></script>
+  <script src="../cuon-utils.js"></script>
+
+  <script>
+    function main() {
+      const webglCanvas = document.getElementById('webgl4');
+
+      const gl = getWebGLContext(webglCanvas);
+
+      const vsource_shader = `
+        attribute vec4 a_Position;
+        void main() {
+          gl_Position = a_Position;
+          gl_PointSize = 10.0;
+        }
+      `;
+
+      const fsource_shader = `
+        precision mediump float;
+        uniform vec4 u_FragColor;
+        void main() {
+          gl_FragColor = u_FragColor;
+        }
+      `;
+
+      gl.clearColor(0.0, 0.0, 0.0, 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      initShaders(gl, vsource_shader, fsource_shader);
+
+      // 获取变量存储位置
+      const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+      const u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
+
+      webglCanvas.onclick = function(e) {
+        click(e, gl, a_Position, u_FragColor);
+      }
+    }
+
+    const gl_points = []
+    function click(e, gl, a_Position, u_FragColor) {
+      const x = e.clientX;
+      const y = e.clientY;
+      const rect = e.target.getBoundingClientRect();
+      // canvas 坐标系
+      const canvasX = x - rect.left;
+      const canvasY = x - rect.top;
+      // webgl 坐标系
+      const webglX = canvasX - rect.width / 2;
+      const webglY = canvasY - rect.height / 2;
+      
+      // a_Positon真实位置
+      const a_PositionX = webglX / (rect.width / 2);
+      const a_PositionY = webglY / (rect.height / 2);
+
+      gl_points.push([a_PositionX, a_PositionY]);
+      console.log(gl_points);
+    }
+  </script>
+  
+</body>
+</html>
