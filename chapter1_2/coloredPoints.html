@@ -56,25 +56,29 @@
       const rect = e.target.getBoundingClientRect();
       // canvas 坐标系
       const canvasX = x - rect.left;
-      const canvasY = x - rect.top;
+      const canvasY = y - rect.top;
       // webgl 坐标系
       const webglX = canvasX - rect.width / 2;
-      const webglY = canvasY - rect.height / 2;
+      const webglY = rect.height / 2 - canvasY;
       
       // a_Positon真实位置
-      const a_PositionX = webglX / (rect.width / 2);
-      const a_PositionY = webglY / (rect.height / 2);
+      const a_PositionX = webglX / 200;
+      const a_PositionY = webglY / 200;
 
       gl_points.push([a_PositionX, a_PositionY]);
+
+      // 必须放在这里
+      gl.clear(gl.COLOR_BUFFER_BIT); // 每次绘制点之前清空画布
       
-      gl_points.forEach(item => {
+      gl_points.forEach((item, index) => {
         // 设置变量
         gl.vertexAttrib2fv(a_Position, item);
-        gl.uniform2fv(u_FragColor, item);
+        const colorItem = item.map(val => {
+          return Math.abs(val)
+        })
+        gl.uniform4f(u_FragColor, ...colorItem, 0.0, 0.8);
 
-        gl.clear(gl.COLOR_BUFFER_BIT); // 每次绘制点之前清空画布
-        
-        gl.drawArrays(gl.points, 0, 1);
+        gl.drawArrays(gl.POINTS, 0, 1);
       })
     }
   </script>
