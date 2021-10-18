@@ -76,7 +76,8 @@
         const colorItem = item.map(val => {
           return Math.abs(val)
         })
-        gl.uniform4f(u_FragColor, ...colorItem, 0.0, 0.8);
+        // gl.uniform4f(u_FragColor, ...colorItem, 0.0, 0.8);
+        gl.uniform4fv(u_FragColor, [...colorItem, 0.0, 0.8]);
 
         gl.drawArrays(gl.POINTS, 0, 1);
       })

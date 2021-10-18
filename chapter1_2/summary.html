@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<h4>一、学了哪些绘制</h4>
+	<p>1、清空画布（我更愿意理解为用某种颜色初始化填充画布颜色）</p>
+	<p>2、绘制一个点（包含静态的点，通过鼠标点击绘制不同颜色的点）</p>
+	<h4>二、用到的方法</h4>
+	<p>1、gl.clearColor(1.0, 1.0, 1.0, 1.0)</p>
+	<p>2、gl.clear(gl.COLOR_BUFFER_BIT)</p>
+	<p>3、gl.getAttribLocation(gl.program, 'a_Position')  // 获取变量a_Position的存储位置</p>
+	<p>4、gl.getUniformLocation(gl.program, 'u_FragColor')</p>
+	<p>5、gl.vertexAttrib[1234]f(a_Position, 1.0) // 1f:表示只传递一个值，代表x，2f:传递两个值，代表y。。。</p>
+	<p>6、gl.vertexAttrib[1234]fv(a_Position, [1.0, 0.0]) // fv:表示后面传递的值可以传递成数组，数组每项表示x,y,z,w</p>
+	<p>7、gl.uniform[1234]f(u_FragColor, 1.0)</p>
+	<p>8、gl.uniform[1234]fv(u_FragColor, [1.0, 1.0, 0.0, 1.0])</p>
+	<p>9、gl.drawArrays(gl.POINTS, 0, 1) // 绘制一个点</p>
+	<h4>齐次坐标</h4>
+	<p>vec4(1.0, 1.0, 1.0, 1.0)</p>
+	<p>着色器</p>
+	<p>1、顶点着色器：描述顶点位置，大小等</p>
+	<p>2、片元着色器：描述一个像素的颜色等</p>
+</body>
+</html>
