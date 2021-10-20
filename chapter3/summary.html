@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>第三章总结</title>
+</head>
+<body>
+	<h4>一、学完本章可以绘制的图形</h4>
+	<p>1、基础类型：线，三角形</p>
+	<p>2、缝合类型：矩形(用两个三角形拼接)，五角星(可以用线实现)</p>
+	<p class="red_text">3、其实各种图形基本都是由线、三角形拼接而来的，学会了最基本的图形，可以为更复杂的图形做准备</p>
+	<h4>二、类型数组</h4>
+	<p>Float32Array：字节顺序为32位的浮点数型数组 （C浮点数据类型）</p>
+	<p>Float64Array：字节顺序为64位的浮点数型数组 （C双精度浮点数据类型）</p>
+	<h4>三、如何绘制三角形</h4>
+	<p>1、获取gl绘制上下文</p>
+	<p>2、定义着色器字符串，并初始化着色器</p>
+	<p>3、初始化多个顶点</p>
+	<p class="txt_desc">(1): 定义定点，new Float32Array([])</p>
+	<p class="txt_desc">(2): 创建缓冲区：gl.createBuffer()</p>
+	<p class="txt_desc">(3): 绑定缓冲区到目标：gl.bindBuffer(target, buffer),
+		<p class="red_txt txt_desc1">target: gl.ARRAY_BUFFER/gl.ELEMENT_BUFFER；buffer: 创建的缓冲区对象</p>
+	</p>
+	<p class="txt_desc">(4): 将数据写入缓冲区：gl.bufferData(target, data, useage)
+		<p class="red_txt txt_desc1">target: 同上；data: 第一步定义的数据；<br>
+			useage: gl.STATIC_DRAW(只会向缓冲区对象写入一次数据，但需要绘制很多次)
+			gl.STREM_DRAW(只会向缓冲区对象写入一次数据，然后绘制若干次)
+			gl.DYNAMIC_DRAW(会向缓冲区对象多次写入数据，并绘制很多次)
+		</p>
+	</p>
+	<p class="txt_desc">(5): 将数据传递给缓冲区对象：gl.vertexAttribPointer(location, size, type, normalized, stride, offset)
+		<p class="red_txt txt_desc1">
+			location: 变量地址；<br>
+			size: 分量个数，两个代表x,y，z,w分别默认0.0，1.0，同vertexAttrib[1234]f参数个数意思；<br>
+			type: 数据类型（gl.FLOAT ~ Float32Array，gl.INT ~ Int32Array，gl.UNSINGED_INT ~ UInt32Array， gl.SHORT ~ Int16Array，gl.UNSINGED_SHORT ～ UInt16Array， gl.UNSIGNED_BYTE ~ UInt8Array）；<br>
+			normalized: 传入true 或者 false 表明是否将非浮点型的数据归一化到 [0, 1] 或 [-1, 1] 区间；<br>
+			stride: 指定相邻两个顶点间的字节数，默认为0 ------- 不懂；<br>
+			offset: 指定缓冲区对象中的偏移量（以字节为单位），即attribute 变量从缓冲区中的何处开始存储 ------- 不懂；<br>
+		</p>
+	</p>
+	<p class="txt_desc">(6): 开启attribute变量：gl.enableVertexAttribArray(location)
+		<p class="red_txt txt_desc1">location: 变量地址</p>
+	</p>
+	<p>4、设置画布清空颜色 gl.clearColor(0.0, 0.0, 0.0, 1.0)</p>
+	<p>5、清空画布 gl.clear(gl.COLOR_BUFFER_BIT)</p>
+	<p>6、开始绘制 gl.drawArrays(type, start, n)</p>
+	<p class="txt_desc">type类型有：
+		<p class="red_txt txt_desc1">
+			gl.POINTS: 点 <br>
+			gl.TRIANGLE: 三角形 <br>
+			gl.TRIANGLE_STRIP: [v0, v1, v2], [v2, v1, v3], [v3, v2, v4]，保证都是逆时针绘制三角形 ---- 不知道对不对 <br>
+			gl.TRIANGLE_FAN: <br>
+			gl.LINES: 不连贯的线 [v0, v1], [v2, v3]... <br>
+			gl.LINE_STRIP: 连贯的线 [v0, v1], [v1, v2], [v2, v3]... <br>
+			gl.LINE_LOOP: 连贯并且封闭 [v0, v1], [v1, v2], [v2, v3]...[vn, v0] <br>
+		</p>
+	</p>
+</body>
+
+<style>
+	.red_txt {
+		color: red;;
+	}
+	.txt_desc {
+		text-indent: 30px;
+	}
+	.txt_desc1 {
+		padding-left: 60px;
+	}
+</style>
+</html>

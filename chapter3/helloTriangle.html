@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>绘制一个三角形</title>
+</head>
+<body onload="main()">
+	<canvas id="webgl2" width="400" height="400"></canvas>
+
+	<script src="../webgl-utils.js"></script>
+	<script src="../webgl-debug.js"></script>
+	<script src="../cuon-utils.js"></script>
+
+	<script>
+		function main() {
+			const webglCanvas = document.getElementById('webgl2');
+
+			const gl = getWebGLContext(webglCanvas);
+
+			const vsource_shader = `
+				attribute vec4 a_Position;
+				void main() {
+					gl_Position = a_Position;
+				}
+			`;
+
+			const fsource_shader = `
+				void main() {
+					gl_FragColor = vec4(1.0, 0.2, 0.4, 1.0);
+				}
+			`;
+
+			initShaders(gl, vsource_shader, fsource_shader);
+
+			const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+
+			const n = initMultiVertex(gl, a_Position);
+
+			gl.clearColor(0.0, 0.0, 0.0, 1.0);
+
+			gl.clear(gl.COLOR_BUFFER_BIT);
+
+			gl.drawArrays(gl.TRIANGLES, 0, n);
+		}
+
+		function initMultiVertex(gl, a_Position) {
+			const vertex = new Float32Array([
+				-0.3, 0.2, 0.3, 0.2, 0, -0.3
+			]);
+			const n = 3
+			// 创建缓冲区
+			const vertexBuffer = gl.createBuffer();
+			// 绑定缓冲区对象到目标
+			gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+			// 给缓冲区对象填充数据
+			gl.bufferData(gl.ARRAY_BUFFER, vertex, gl.STATIC_DRAW);
+			// 将缓冲区对象分配给变量(变量地址，分量个数，数据格式，)
+			gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+			// 开启attribute变量
+			gl.enableVertexAttribArray(a_Position);
+
+			return n;
+		}
+	</script>
+</body>
+</html>

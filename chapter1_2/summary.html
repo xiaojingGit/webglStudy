@@ -17,7 +17,7 @@
 	<p>4、gl.getUniformLocation(gl.program, 'u_FragColor')</p>
 	<p>5、gl.vertexAttrib[1234]f(a_Position, 1.0) // 1f:表示只传递一个值，代表x，2f:传递两个值，代表y。。。</p>
 	<p>6、gl.vertexAttrib[1234]fv(a_Position, [1.0, 0.0]) // fv:表示后面传递的值可以传递成数组，数组每项表示x,y,z,w</p>
-	<p>7、gl.uniform[1234]f(u_FragColor, 1.0)</p>
+	<p>7、gl.uniform[1234]f(u_FragColor, 1.0) <span style="color: red">// 这里很奇怪，只有4f试着好用</span></p>
 	<p>8、gl.uniform[1234]fv(u_FragColor, [1.0, 1.0, 0.0, 1.0])</p>
 	<p>9、gl.drawArrays(gl.POINTS, 0, 1) // 绘制一个点</p>
 	<h4>齐次坐标</h4>
