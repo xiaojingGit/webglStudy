@@ -50,13 +50,20 @@
 		<p class="red_txt txt_desc1">
 			gl.POINTS: 点 <br>
 			gl.TRIANGLE: 三角形 <br>
-			gl.TRIANGLE_STRIP: [v0, v1, v2], [v2, v1, v3], [v3, v2, v4]，保证都是逆时针绘制三角形 ---- 不知道对不对 <br>
-			gl.TRIANGLE_FAN: <br>
+			gl.TRIANGLE_STRIP: [v0, v1, v2], [v2, v1, v3], [v3, v2, v4]，保证都是逆时针绘制三角形 <br>
+			gl.TRIANGLE_FAN: [v0, v1, v2], [v0, v2, v3] <br>
 			gl.LINES: 不连贯的线 [v0, v1], [v2, v3]... <br>
 			gl.LINE_STRIP: 连贯的线 [v0, v1], [v1, v2], [v2, v3]... <br>
 			gl.LINE_LOOP: 连贯并且封闭 [v0, v1], [v1, v2], [v2, v3]...[vn, v0] <br>
 		</p>
 	</p>
+	<h4>四、平移、旋转</h4>
+	<p class="txt_desc">平移和旋转涉及到一些数学计算，先不做仔细探讨，主要对一些语法有些印象</p>
+	<p class="txt_desc"><img src="../static/images/1.jpg" alt="" width="400"></p>
+	<p class="txt_desc"><img src="../static/images/2.jpg" alt="" width="800"></p>
+	<p class="txt_desc"><img src="../static/images/3.jpg" alt="" width="600"></p>
+	<p class="txt_desc"><img src="../static/images/4.jpg" alt="" width="600"></p>
+	<p class="txt_desc">注意到上面新增的变量使用uniform定义，这是因为平移、旋转变化都与顶点无关，3个顶点挪动的位置是统一的</p>
 </body>
 
 <style>
