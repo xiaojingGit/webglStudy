@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>矩阵实现旋转三角形</title>
+</head>
+<body onload="main()">
+	<canvas id="webgl6" width="400" height="400"></canvas>
+
+	<script src="../utils/webgl-utils.js"></script>
+	<script src="../utils/webgl-debug.js"></script>
+	<script src="../utils/cuon-utils.js"></script>
+
+	<script>
+		function main() {
+			const webglCanvas = document.getElementById('webgl6');
+
+			const gl = getWebGLContext(webglCanvas);
+
+			const vsource_shader = `
+				attribute vec4 a_Position;
+				uniform mat4 u_Rotated_Matrix;
+				void main() {
+					gl_Position = u_Rotated_Matrix * a_Position;
+				}
+			`;
+
+			const fsource_shader = `
+				void main() {
+					gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+				}
+			`;
+
+			initShaders(gl, vsource_shader, fsource_shader);
+
+			const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+
+			const n = initMultiVertix(gl, a_Position);
+
+			// Create a rotation matrix
+			const radian = Math.PI * 90.0 / 180.0; // Convert to radians
+			const cosB = Math.cos(radian), sinB = Math.sin(radian);
+
+			// Note: WebGL is column major order
+			const xformMatrix = new Float32Array([
+				cosB, sinB, 0.0, 0.0,
+				-sinB, cosB, 0.0, 0.0,
+				0.0,  0.0, 1.0, 0.0,
+				0.0,  0.0, 0.0, 1.0
+			]);
+
+			const u_Rotated_Matrix = gl.getUniformLocation(gl.program, 'u_Rotated_Matrix');
+			gl.uniformMatrix4fv(u_Rotated_Matrix, false, xformMatrix);
+
+			// 变换矩阵定义
+			// u_Rotated_Matrix
+
+			gl.clearColor(0.0, 0.0, 0.0, 1.0);
+			gl.clear(gl.COLOR_BUFFER_BIT);
+
+			gl.drawArrays(gl.TRIANGLES, 0, n);
+		}
+
+		function initMultiVertix(gl, a_Position) {
+			const vertex = new Float32Array([
+				-0.3, 0.2, 0.3, 0.2, 0, -0.3
+			]);
+
+			const n = 3;
+
+			const vertexBuffer = gl.createBuffer();
+
+			gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+
+			gl.bufferData(gl.ARRAY_BUFFER, vertex, gl.STATIC_DRAW);
+
+			gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+
+			gl.enableVertexAttribArray(a_Position);
+
+			return n;
+		}
+	</script>
+	
+</body>
+</html>
