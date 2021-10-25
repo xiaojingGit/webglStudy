@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第4章总结</title>
+  <style>
+    .red_txt {
+      color: red;;
+    }
+  </style>
+</head>
+<body>
+  <h3>一、学习了什么</h3>
+  <p>本章主要是学习如何使用矩阵库对图形进行变换，如何将多个基本变换组合成一个复杂的变换，如何产生动画</p>
+  <p>有两个点比较关键：复杂变幻的矩阵可以通过一系列基本变换的矩阵相乘得到；通过反复变换和重绘图形可以达到动画的效果</p>
+  <h3>二、一些概念</h3>
+  <p>模型变换/建模变换：一个模型可能经过了多次变换，将这些变换全部符合成一个等效的变化，就得到了模型变换/建模变换</p>
+  <p>例：平移后旋转三角形</p>
+  <p>《‘平移’后的坐标》= 《平移矩阵》*《原始坐标》</p>
+  <p>《‘平移后旋转’后的坐标》=《旋转矩阵》*《平移后的坐标》</p>
+  <p>《‘平移后旋转’后的坐标》=《旋转矩阵》*<span class="red_txt">（《平移矩阵》*《原始坐标》</span></p>
+  <p>《‘平移后旋转’后的坐标》=<span class="red_txt">（《旋转矩阵》*《平移矩阵》）</span>*《原始坐标》</p>
+</body>
+</html>
