@@ -40,7 +40,7 @@
 
       const u_RotatedMatrix = gl.getUniformLocation(gl.program, 'u_RotatedMatrix');
       const rotateMatrix4 = new Matrix4();
-      rotateMatrix4.setRotate(60.0, 0, 0, 1);
+      rotateMatrix4.setRotate(90.0, 0, 0, 1);
       gl.uniformMatrix4fv(u_RotatedMatrix, false, rotateMatrix4.elements); // 第二个参数在webgl中必须指定为false
 
 
@@ -52,7 +52,7 @@
 
     function initMultiVertix(gl, a_Position) {
       const vertix = new Float32Array([
-        0.0, 0.5, -0.3, -0.3, 0.3, -0.3
+      0.0, 0.2, -0.2, -0.2, 0.2, -0.2
       ]);
       const n = 3;
 

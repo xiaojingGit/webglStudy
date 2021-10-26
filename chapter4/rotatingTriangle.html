@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>旋转三角形动画</title>
+</head>
+<body onload="main()">
+	<canvas id="webgl3" width="400" height="400"></canvas>
+	<button onclick="up()">加速</button>
+	<button onclick="down()">减速</button>
+  
+	<script src="../utils/webgl-utils.js"></script>
+	<script src="../utils/webgl-debug.js"></script>
+	<script src="../utils/cuon-utils.js"></script>
+	<script src="../utils/cuon-matrix.js"></script>
+	
+	<script>
+		let angle_step = 90.0; // 90度/s
+
+		function main() {
+			const webglCanvas = document.getElementById('webgl3');
+
+			const gl = getWebGLContext(webglCanvas);
+
+			const vsource_shader = `
+				attribute vec4 a_Position;
+				uniform mat4 u_RotateMatrix;
+				void main() {
+					gl_Position = u_RotateMatrix * a_Position;
+				}
+			`;
+
+			const fsource_shader = `
+				void main() {
+					gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+				}
+			`;
+
+			initShaders(gl, vsource_shader, fsource_shader);
+
+			const n = initMultiVertix(gl);
+
+			gl.clearColor(0.0, 0.0, 0.0, 1.0);
+			let currRotateAngle = 0;
+			const rotatingMatrix4 = new Matrix4();
+			const u_RotateMatrix = gl.getUniformLocation(gl.program, 'u_RotateMatrix');
+			const tick = function() {
+				currRotateAngle = animate(currRotateAngle);
+				draw(gl, currRotateAngle, n, rotatingMatrix4, u_RotateMatrix);
+				requestAnimationFrame(tick);
+			}
+			tick();
+
+			gl.drawArrays(gl.TRIANGLES, 0, n)
+		}
+
+		function draw(gl, angle, n, rotatingMatrix4, u_RotateMatrix) {
+			rotatingMatrix4.setRotate(angle, 0, 0, 1);
+			rotatingMatrix4.translate(0.5, 0, 0);  // 旋转加上平移
+			gl.uniformMatrix4fv(u_RotateMatrix, false, rotatingMatrix4.elements);
+			gl.clear(gl.COLOR_BUFFER_BIT);
+			gl.drawArrays(gl.TRIANGLES, 0, n);
+		}
+
+		let last_time = 0;
+		function animate(currRotateAngle) {
+			const now_time = new Date().getTime();
+			if (!last_time) {
+				last_time = now_time;
+				return 0;
+			}
+			const interval_time = now_time - last_time;
+			last_time = now_time;
+			return currRotateAngle + angle_step * (interval_time / 1000);
+		}
+
+		function initMultiVertix(gl) {
+			const vertex = new Float32Array([
+			0.0, 0.2, -0.2, -0.2, 0.2, -0.2
+			]);
+
+			const n = 3;
+
+			const vertexBuffer = gl.createBuffer();
+
+			gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+
+			gl.bufferData(gl.ARRAY_BUFFER, vertex, gl.STATIC_DRAW);
+
+			const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+
+			gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+
+			gl.enableVertexAttribArray(a_Position);
+
+			return n;
+		}
+
+		function up() {
+			angle_step += 10.0;
+		}
+
+		function down() {
+			angle_step -= 10;
+		}
+	</script>
+</body>
+</html>
