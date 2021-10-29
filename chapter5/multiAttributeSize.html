@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>不同大小的点</title>
+</head>
+<body onload="main()">
+	<canvas id="webgl1" width="400" height="400"></canvas>
+
+	<script src="../utils/webgl-utils.js"></script>
+	<script src="../utils/webgl-debug.js"></script>
+	<script src="../utils/cuon-utils.js"></script>
+
+	<script>
+		function main() {
+			const webglCanvas = document.getElementById("webgl1");
+
+			const gl = getWebGLContext(webglCanvas);
+
+			const vsource_shader = `
+				attribute vec4 a_Position;
+				attribute float a_PointSize;
+				void main() {
+					gl_Position = a_Position;
+					gl_PointSize = a_PointSize;
+				}
+			`;
+			const fsource_shader = `
+				void main() {
+					gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+				}
+			`;
+
+			initShaders(gl, vsource_shader, fsource_shader);
+
+			const n = initMultiVertex(gl);
+
+			gl.clearColor(0.0, 0.0, 0.0, 1.0);
+			gl.clear(gl.COLOR_BUFFER_BIT);
+
+			gl.drawArrays(gl.POINTS, 0, n);
+		}
+
+		function initMultiVertex(gl) {
+			const vertex_pos = new Float32Array([
+				0, 0.5, -0.5, -0.5, 0.5, -0.5
+			])
+			const vertex_size = new Float32Array([
+				10.0, 20.0, 40.0
+			])
+			const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+			const posBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, vertex_pos, gl.STATIC_DRAW);
+			gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+			gl.enableVertexAttribArray(a_Position);
+
+			const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+			const sizeBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ARRAY_BUFFER, sizeBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, vertex_size, gl.STATIC_DRAW);
+			gl.vertexAttribPointer(a_PointSize, 1, gl.FLOAT, false, 0, 0);
+			gl.enableVertexAttribArray(a_PointSize);
+
+			return 3;
+		}
+	</script>
+</body>
+</html>
