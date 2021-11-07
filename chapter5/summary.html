@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第5章总结</title>
+  <style>
+    .red_txt {
+      color: red;;
+    }
+    .txt_desc {
+      text-indent: 30px;
+    }
+    .txt_desc1 {
+      padding-left: 60px;
+    }
+    .txt_underline {
+      text-decoration: underline;
+    }
+    .txt_no_underline {
+      text-decoration: none;
+    }
+    table {
+      border: 1px;
+    }
+    th {
+      text-align: left;
+    }
+    th:nth-child(1) {
+      width: 200px;
+    }
+    th:nth-child(2) {
+      text-align: center;
+      width: 120px;
+    }
+    th:nth-child(3) {
+      width: 400px;
+    }
+    th:nth-child(4) {
+      width: 400px;
+    }
+    th.w_500 {
+      width: 500px;
+    }
+  </style>
+</head>
+<body>
+  <h3>一、实现3个点不同大小</h3>
+  <p>第一种方法：顶点着色器创建两个attribute变量，a_Position、a_PointSize；初始化顶点时创建不同的缓冲区，为缓冲区传递好数据之后，将缓冲区分别分配给a_Positioin和a_PointSize变量</p>
+  <p>第二种方法：可以将顶点的数据交错组织在同一个类型数组中，然后利用gl.vertexAttribPointer(,,,,stride, offset)的步进和偏移参数来绘制，数组如下：</p>
+  <p class="txt_desc red_txt">var vertex = new Float32Array([0.0, 0.5, 5.0, -0.5, -0.5, 10.0, 0.5, -0.5, 20.0]) 其中每三个点表示一个点的数值</p>
+  <p class="txt_desc red_txt">
+    stride: 表示在缓冲区对象中，单个顶点的所有数据的字节数，通俗一点就是上述类型数组每三个数值表示一个点，那么该参数值就是：
+    <span class="txt_underline">每个数值占用字节数*3</span>
+    vertex.BYTES_PER_ELEMENT属性表示每个元素所占字节数，即<span class="txt_underline">vertex.BYTES_PER_ELEMENT * 3</span>
+  </p>
+  <p class="txt_desc red_txt">
+    offset: 表示分配的对应attribute变量，在类型数组中从第几位开始，如上述表示大小的数据是类型数组的第3为，那么该参数值就为<span class="txt_underline">vertex.BYTES_PER_ELEMENT * 2</span>
+  </p>
+  <h3>二、varying变量的作用和内插过程</h3>
+  <p>作用：从顶点着色器向片元着色器传递数据</p>
+  <p class="txt_desc txt_underline">在顶点着色器和片元着色器中声明同名的varying变量，顶点着色器中额外需要一个attribute变量，赋值给声明的varying变量，即向顶点着色器传递数据 <span class="red_txt">（留一个疑问，没有gl.vertexUniformPointer之类的方法吗）</span></p>
+  <p class="txt_desc">webgl中，如果顶点着色器与片元着色器有类型和命名都相同的varying变量，那么顶点着色器赋值给该变量的值会被自动的传入片元着色器</p>
+  <p>内插过程：当我们只设置顶点的颜色时，两个顶点之间的区域片元颜色都会被恰当的计算出来，这个过程就被称为内插过程，当顶点之间每个片元的颜色都通过这种方式计算出来后，就会被传给片元着色器的v_color变量</p>
+  <h3>三、顶点着色器和片元着色器之间，包含两个步骤</h3>
+  <p>第一个：图形装配过程/图元装配过程</p>
+  <p class="txt_desc">将孤立的顶点坐标装配成几何图形，类别主要看gl.drawArrays第一个参数，gl.drawArrays第三个参数n为几，就会执行几次顶点着色器</p>
+  <p>第二个：光栅化</p>
+  <p class="txt_desc">将装配好的几何图形转化为片元，<span class="red_txt">片元数目就是这个图形在屏幕上最终覆盖的像素数</span></p>
+  <h3>四、调用片元着色器</h3>
+  <p>光栅化过程结束后，程序就开始逐片元调用片元着色器，<span class="red_txt">有几个片元(像素)片元着色器就会被调用几次，这个可以通过根据片元位置来确定片元颜色来证明</span></p>
+  <p class="txt_desc red_txt">gl.drawingBufferWidth（颜色缓冲区的宽度），gl.drawingBufferHeight（颜色缓冲区高度）</p>
+  <p class="txt_desc red_txt">gl_FragColor：该内置变量的第1个和第2个分量表示片元在canvas坐标系统的坐标值 gl_FragColor.x/gl_FragColor.y</p>
+  <h3>五、纹理映射</h3>
+  <p>纹理映射就是将一张图片映射到一个几何图形的表面上去，这张图片又可以称为<span class="red_txt">纹理图像或纹理</span></p>
+  <p>纹理映射需要遵循的步骤：</p>
+  <p class="txt_desc">1、准备需要映射的纹理图像</p>
+  <p class="txt_desc">2、为几何图形配置纹理映射方式</p>
+  <p class="txt_desc">3、加载纹理图像，对其进行一些配置，以在webgl中使用</p>
+  <p class="txt_desc">4、在片元着色器中将相应的纹素从纹理中抽取出来，并将纹素的颜色赋给片元</p>
+  <h3>六、纹理坐标</h3>
+  <p>纹理坐标确定纹理图像的哪部分将覆盖到几何图形上，几何图形的顶点坐标确定哪部分被纹理图像覆盖</p>
+  <p class="txt_desc red_txt">纹理坐标使用st坐标系，纹理左下角为坐标原点，向右和向上为坐标正方向</p>
+  <p class="txt_desc red_txt">如果纹理占满整个几何图形，那么纹理坐标(0.0, 1.0)将会映射到顶点坐标(-1.0, 1.0, 0.0, 1.0)</p>
+  <h3>七、纹理图像映射到几何图形上的程序过程</h3>
+  <p class="txt_desc">1、顶点着色器接收顶点的纹理坐标，光栅后传递给片元着色器（内插后的坐标）</p>
+  <p class="txt_desc">2、片元着色器根据纹理坐标，从纹理图像上抽取纹素颜色，赋给当前片元</p>
+  <p class="txt_desc">3、设置顶点的纹理坐标</p>
+  <p class="txt_desc">4、准备待加载的纹理图像，令浏览器读取（纹理图像不能跨域）</p>
+  <p class="txt_desc">5、监听纹理图像加载完成，然后再webgl中使用纹理</p>
+  <h3>八、关键方法</h3>
+  <p>1、gl.createTexture() 创建纹理对象</p>
+  <p>2、gl.deleteTexture(texture) 删除纹理对象，参数为gl.createTexture()返回值</p>
+  <p>3、gl.pixelStorei(pname, param) 使用pname和param指定的方式处理图像</p>
+  <p class="txt_desc">pname: gl.UNPACK_FLIP_Y_WEBGL 对图像进行y轴反转，默认值false</p>
+  <p class="txt_desc">pname: gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL 将图像RGB颜色值得每一个分量成一A，默认值为false</p>
+  <p class="txt_desc">param: 指定非0（true）或0（false），必须为整数</p>
+  <p>4、gl.activeTexture(textnit) 激活指定的纹理单元</p>
+  <p class="txt_desc">texUnit: 指定准备激活的纹理单元，gl.TEXTURE0、gl.TEXTURE1、gl.TEXTURE2等，最后的数字表示纹理单元编号</p>
+  <p class="txt_desc red_txt">webgl通过使用纹理单元来同时使用多个纹理，每个纹理单元有一个单元编号来管理一张纹理图像，默认情况下，webgl至少支持8个纹理单元</p>
+  <p>5、gl.bindTexture(target, textrue) 开启纹理对象，并将纹理对象绑定到gl.activeTexture(texUnit)激活的纹理单元上</p>
+  <p class="txt_desc">target: gl.TEXTURE_2D(二维纹理)或gl.TEXTURE_BUVE_MAP(立方体纹理)</p>
+  <p class="txt_desc">texture: 表示绑定的纹理单元</p>
+  <p class="txt_desc red_txt">在webgl中，没法直接操作纹理对象，必须通过将纹理对象绑定到纹理单元，然后通过操作纹理单元来操作纹理对象</p>
+  <p>6、gl.texParameteri(target, pname, param) 配置纹理对象参数</p>
+  <p class="txt_desc">target: gl.TEXTURE_2D(二维纹理)或gl.TEXTURE_BUVE_MAP(立方体纹理)</p>
+  <p class="txt_desc">pname: 纹理参数</p>
+  <p class="txt_desc">param: 纹理参数值</p>
+  <table border="">
+    <tr>
+      <th>纹理参数</th>
+      <th>描述</th>
+      <th>默认值</th>
+      <th>其它值</th>
+    </tr>
+    <tr>
+      <th>gl.TEXTURE_MAG_FILTER</th>
+      <th>纹理放大</th>
+      <th>gl.LINEAR(使用距离新像素中心最近的四个像素的颜色值的加权平均，作为新像素值)</th>
+      <th>gl.NEAREST(使用原纹理上距离映射后像素中心最近的那个像素的颜色值，作为新像素的值)</th>
+    </tr>
+    <tr>
+      <th>gl.TEXTURE_MIN_FILTER</th>
+      <th>纹理缩小</th>
+      <th>gl.NEAREST_MIPMAP_LINEAR(金字塔纹理，不常用到)</th>
+      <th>gl.NEAREST(使用原纹理上距离映射后像素中心最近的那个像素的颜色值，作为新像素的值)<br>
+        gl.LINEAR(使用距离新像素中心最近的四个像素的颜色值的加权平均，作为新像素值)</th>
+    </tr>
+    <tr>
+      <th>gl.TEXTURE_WRAP_S</th>
+      <th>纹理水平填充</th>
+      <th>gl.REPEAT(平铺式的重复纹理)</th>
+      <th>gl.MIRRORED_REPEAT(镜像对称式的重复纹理)<br>gl.CLAMP_TO_EDGE(使用纹理图像边缘值)</th>
+    </tr>
+    <tr>
+      <th>gl.TEXTURE_WRAP_T</th>
+      <th>纹理垂直填充</th>
+      <th>gl.REPEAT(平铺式的重复纹理)</th>
+      <th>gl.MIRRORED_REPEAT(镜像对称式的重复纹理)<br>gl.CLAMP_TO_EDGE(使用纹理图像边缘值)</th>
+    </tr>
+  </table>
+  <p>7、gl.texImage2D(target, level, internalformat, format, type, image) 将纹理图像分配给纹理对象</p>
+  <p class="txt_desc">target: gl.TEXTURE_2D(二维纹理)或gl.TEXTURE_BUVE_MAP(立方体纹理)</p>
+  <p class="txt_desc">level: 0（实际上是为金字塔纹理准备的，这里不涉及）</p>
+  <p class="txt_desc">internalformat: 图像的内部格式</p>
+  <p class="txt_desc">format: 纹理数据格式，必须使用与internalformat相同的值</p>
+  <p class="txt_desc">type: 纹理数据类型</p>
+  <p class="txt_desc">image: 包含纹理图像的Image对象</p>
+  <p class="txt_desc">下面是纹理数据的格式：</p>
+  <table border="">
+    <tr><th>格式</th><th class="w_500">描述</th></tr>
+    <tr><th>gl.RGB</th><th>红、绿、蓝</th></tr>
+    <tr><th>gl.RGBA</th><th>红、绿、蓝、透明度</th></tr>
+    <tr><th>gl.ALPHA</th><th>（0.0, 0.0, 0.0, 透明度）</th></tr>
+    <tr><th>gl.LUMINANCE</th><th>L、L、L、1L: 流明(物体表面的亮度，通常使用红、绿、蓝的加权平均值)</th></tr>
+    <tr><th>gl.LUMINANCE_ALPHA</th><th>L、L、L、透明度</th></tr>
+  </table>
+  <p class="txt_desc">下面是纹理数据的数据格式</p>
+  <table border="">
+    <tr><th>格式</th><th class="w_500">描述</th></tr>
+    <tr><th>gl.UNSIGNED_BYTE</th><th>无符号整型，每个颜色分量占据1字节</th></tr>
+    <tr><th>gl.UNSIGNED_SHORT_5_6_5</th><th>RGB，每个颜色分量分别占据5、6、5比特</th></tr>
+    <tr><th>gl.UNSIGNED_SHORT_4_4_4_4</th><th>RGBA，每个颜色分量分别占据4、4、4、4比特</th></tr>
+    <tr><th>gl.UNSIGNED_SHORT_5_5_5_1</th><th>RGBA，RGB每个分量占据5比特，A分量占据1比特</th></tr>
+  </table>
+  <p>8、gl.uniform1i(sampler, texUnit) 将纹理单元传递给片元着色器</p>
+  <p class="txt_desc">sampler: 纹理数据类型（sampler2D: 绑定到gl.TEXTURE_2D上的纹理数据类型，samplerCube: 绑定到gl.TEXTURE_CUBE_MAP上的纹理数据类型）</p>
+  <p class="txt_desc">texUnit: 纹理单元编号</p>
+  <p>9、texture2D(sampler2D sampler, vec2 coord) 在片元着色器中获取纹理像素颜色，返回值vec4类型</p>
+  <p class="txt_desc">sampler: 指定纹理单元变号</p>
+  <p class="txt_desc">coord: 指定纹理坐标</p>
+</body>
+</html>

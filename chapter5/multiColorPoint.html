@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>不同颜色的点</title>
+	<title>不同大小颜色的点</title>
 </head>
 <body onload="main()">
 	<canvas id="webgl2" width="400" height="400"></canvas>
@@ -40,6 +40,40 @@
 			`;
 
 			initShaders(gl, vsource_shader, fsource_shader);
+
+			const n = initMultiVertex(gl);
+
+			gl.clearColor(0.0, 0.0, 0.0, 1.0);
+			gl.clear(gl.COLOR_BUFFER_BIT);
+			
+			gl.drawArrays(gl.POINTS, 0, n);
+		}
+		function initMultiVertex(gl) {
+			// 前两个表示坐标，后3个表示颜色值
+			const vertex = new Float32Array([
+				0, 0.5, 10.0, 1.0, 0.0, 0.0,
+				-0.5, -0.5, 20.0, 0.0, 1.0, 0.0,
+				0.5, -0.5, 40.0, 0.0, 0.0, 1.0
+			])
+			const n = 3;
+			const vertexBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, vertex, gl.STATIC_DRAW);
+			
+			const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+			const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+			const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+			const size = vertex.BYTES_PER_ELEMENT;
+
+			gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, size * 6, 0);
+			gl.vertexAttribPointer(a_PointSize, 1, gl.FLOAT, false, size * 6, size * 2);
+			gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, size * 6, size * 3);
+
+			gl.enableVertexAttribArray(a_Position);
+			gl.enableVertexAttribArray(a_PointSize);
+			gl.enableVertexAttribArray(a_Color);
+
+			return n;
 		}
 	</script>
 </body>

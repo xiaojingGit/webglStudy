@@ -19,8 +19,65 @@
 			const gl = getWebGLContext(webglCanvas);
 
 			const vsource_shader = `
-			
+				attribute vec4 a_Position;
+				attribute vec2 a_texCoord;
+				varying vec2 v_texCoord;
+				void main() {
+					gl_Position = a_Position;
+					v_texCoord = a_texCoord;
+				}
 			`;
+
+			const fsource_shader = `
+				precision mediump float;
+				uniform sampler2D u_Sampler;
+				varying vec2 v_texCoord;
+				void main() {
+					gl_FragColor = texture2D(u_Sampler, v_texCoord);
+				}
+			`;
+
+			initShaders(gl, vsource_shader, fsource_shader);
+
+			const n = initVertex(gl);
+
+			loadTexTure();
+		}
+
+		// 纹理图像加载
+		function loadTexTure() {
+			const img = new Image();
+			img.onload = function() {
+				console.log(img)
+			}
+			img.src = '../static/images/texture1.png';
+		}
+
+		function initVertex(gl) {
+			const vertex = new Float32Array([
+				-1.0, 1.0, 0.0, 1.0,
+				1.0, 1.0, 1.0, 1.0, 
+				1.0, -1.0, 1.0, 0.0
+				-1.0, -1.0, 0.0, 0.0
+			])
+			const n = 4;
+
+			const a_Position = gl.getAttribLocation(gl.program, "a_Position");
+			const a_texCoord = gl.getAttribLocation(gl.program, "a_texCoord");
+			const FSIZE = vertex.BYTES_PER_ELEMENT;
+
+			const buffer = gl.createBuffer();
+
+			gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+			gl.bufferData(gl.ARRAY_BUFFER, vertex, gl.STATIC_DRAW);
+
+			gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 4, 0);
+			gl.vertexAttribPointer(a_texCoord, 2, gl.FLOAT, false, FSIZE * 4, FSIZE * 2);
+
+			gl.enableVertexAttribArray(a_Position);
+			gl.enableVertexAttribArray(a_texCoord);
+
+			return n;
 		}
 	</script>
 	
