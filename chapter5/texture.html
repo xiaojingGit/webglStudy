@@ -7,7 +7,7 @@
 	<title>Document</title>
 </head>
 <body onload="main()">
-	<canvas id="webgl5" width="400" height="400"></canvas>
+	<canvas id="webgl5" width="350" height="233"></canvas>
 
 	<script src="../utils/webgl-utils.js"></script>
 	<script src="../utils/webgl-debug.js"></script>
@@ -66,7 +66,9 @@
 			// 开启纹理对象，并将对象绑定到激活的纹理单元
 			gl.bindTexture(gl.TEXTURE_2D, texture);
 			// 配置纹理对象参数
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 			// 将纹理图像分配给纹理对象
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
 			// 将纹理单元传递给片元着色器
@@ -78,10 +80,10 @@
 
 		function initVertex(gl) {
 			const vertex = new Float32Array([
-				-0.5, 0.5, 0.0, 1.0,
-				-0.5, -0.5, 0.0, 0.0,
-				0.5, 0.5, 1.0, 1.0,
-				0.5, -0.5, 1.0, 0.0
+				-1.0, 1.0, 0.0, 1.0,
+				-1.0, -1.0, 0.0, 0.0,
+				1.0, 1.0, 1.0, 1.0,
+				1.0, -1.0, 1.0, 0.0
 			])
 			const n = 4;
 
