@@ -42,6 +42,97 @@
 			`;
 
 			initShaders(gl, vsource_shader, fsource_shader);
+
+			const n = initVertex(gl);
+
+			initTexture(gl, n);
+
+			gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		}
+
+		function initTexture(gl, n) {
+			const texture1 = gl.createTexture();
+			const texture2 = gl.createTexture();
+
+			const u_Sampler0 = gl.getUniformLocation(gl.program, 'u_Sampler0');
+			const u_Sampler1 = gl.getUniformLocation(gl.program, 'u_Sampler1');
+
+			const img1 = new Image();
+			const img2 = new Image();
+
+			img1.onload = function() {
+				loadTexture(gl, n, texture1, img1, u_Sampler0, gl.TEXTURE0, 0);
+			}
+
+			img2.onload = function() {
+				loadTexture(gl, n, texture2, img2, u_Sampler1, gl.TEXTURE1, 1);
+			}
+
+			img1.src = '../static/images/texture2.jpeg';
+			img2.src = '../static/images/texture3.jpeg';
+		}
+
+		let load1 = false;
+		let load2 = false;
+		function loadTexture(gl, n, texture, img, u_Sampler, glTexture, texunit) {
+			if (texunit === 0) {
+				load1 = true;
+			} else {
+				load2 = true;
+			}
+
+			// y轴反转
+			gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+
+			// 激活纹理单元
+			gl.activeTexture(glTexture);
+
+			// 开启纹理对象，并将纹理对象绑定到激活的纹理单元上
+			gl.bindTexture(gl.TEXTURE_2D, texture);
+
+			// 配置纹理对象参数
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+			// 将纹理图像分配给纹理对象
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+			// 将纹理单元传递给片元着色器
+			gl.uniform1i(u_Sampler, texunit);
+
+			if (load1 && load2) {
+				gl.clear(gl.COLOR_BUFFER_BIT);
+				gl.drawArrays(gl.TRIANGLE_FAN, 0, n)
+			}
+
+		}
+
+		function initVertex(gl) {
+			const vertex = new Float32Array([
+				-1.0, 1.0, 0.0, 1.0,
+				-1.0, -1.0, 0.0, 0.0,
+				1.0, -1.0, 1.0, 0.0,
+				1.0, 1.0, 1.0, 1.0
+			]);
+
+			const n = 4;
+
+			const buffer = gl.createBuffer();
+			gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+			gl.bufferData(gl.ARRAY_BUFFER, vertex, gl.STATIC_DRAW);
+
+			const FSIZE = vertex.BYTES_PER_ELEMENT;
+			const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+			const a_TexCoord = gl.getAttribLocation(gl.program, 'a_TexCoord');
+
+			gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 4, 0);
+			gl.enableVertexAttribArray(a_Position);
+
+			gl.vertexAttribPointer(a_TexCoord, 2, gl.FLOAT, false, FSIZE * 4, FSIZE * 2);
+			gl.enableVertexAttribArray(a_TexCoord);
+
+			return n;
 		}
 	</script>
 </body>
