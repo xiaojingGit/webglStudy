@@ -41,24 +41,47 @@
 
 			const n = initVertex(gl);
 
-			loadTexTure();
+			gl.clearColor(0.0, 0.0, 0.0, 1.0);
+
+			loadTextureImg(gl, n);
 		}
 
 		// 纹理图像加载
-		function loadTexTure() {
+		function loadTextureImg(gl, n) {
 			const img = new Image();
+			const texture = gl.createTexture();
+			const u_Sampler = gl.getUniformLocation(gl.program, 'u_Sampler');
 			img.onload = function() {
-				console.log(img)
+				loadTexTure(gl, texture, img, u_Sampler, n)
 			}
 			img.src = '../static/images/texture1.png';
 		}
 
+		// 纹理配置
+		function loadTexTure(gl, texture, img, u_Sampler, n) {
+			// y轴反转
+			gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+			// 激活纹理单元
+			gl.activeTexture(gl.TEXTURE0);
+			// 开启纹理对象，并将对象绑定到激活的纹理单元
+			gl.bindTexture(gl.TEXTURE_2D, texture);
+			// 配置纹理对象参数
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+			// 将纹理图像分配给纹理对象
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+			// 将纹理单元传递给片元着色器
+			gl.uniform1i(u_Sampler, 0);
+
+			gl.clear(gl.COLOR_BUFFER_BIT);
+			gl.drawArrays(gl.TRIANGLE_STRIP, 0, n)
+		}
+
 		function initVertex(gl) {
 			const vertex = new Float32Array([
-				-1.0, 1.0, 0.0, 1.0,
-				1.0, 1.0, 1.0, 1.0, 
-				1.0, -1.0, 1.0, 0.0
-				-1.0, -1.0, 0.0, 0.0
+				-0.5, 0.5, 0.0, 1.0,
+				-0.5, -0.5, 0.0, 0.0,
+				0.5, 0.5, 1.0, 1.0,
+				0.5, -0.5, 1.0, 0.0
 			])
 			const n = 4;
 
